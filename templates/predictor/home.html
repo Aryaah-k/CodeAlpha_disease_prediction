@@ -1,0 +1,87 @@
+{% extends 'predictor/base.html' %}
+
+{% block title %}Home - Disease Prediction{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-body text-center p-5">
+                <h1 class="display-4 mb-4">🏥 Disease Prediction System</h1>
+                <p class="lead mb-4">
+                    A beginner-friendly machine learning project that predicts diseases 
+                    based on medical parameters using Random Forest algorithm.
+                </p>
+                
+                <div class="row mt-5">
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h3 class="card-title">❤️ Heart Disease</h3>
+                                <p class="card-text">
+                                    Predict the likelihood of heart disease based on 13 medical parameters including age, cholesterol, and blood pressure.
+                                </p>
+                                <a href="{% url 'predict_heart' %}" class="btn btn-primary">Predict Now</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h3 class="card-title">🩸 Diabetes</h3>
+                                <p class="card-text">
+                                    Predict diabetes based on factors like glucose level, BMI, age, and insulin level.
+                                </p>
+                                <a href="{% url 'predict_diabetes' %}" class="btn btn-primary">Predict Now</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h3 class="card-title">🦠 Breast Cancer</h3>
+                                <p class="card-text">
+                                    Predict whether a breast tumor is benign or malignant based on cell characteristics.
+                                </p>
+                                <a href="{% url 'predict_cancer' %}" class="btn btn-primary">Predict Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-5">
+                    <h3>How It Works</h3>
+                    <div class="row text-start mt-4">
+                        <div class="col-md-3">
+                            <h5>1. Data Collection</h5>
+                            <p>Synthetic medical datasets are used for training.</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h5>2. Model Training</h5>
+                            <p>Random Forest algorithm learns patterns from data.</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h5>3. Prediction</h5>
+                            <p>Enter medical parameters to get predictions.</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h5>4. Results</h5>
+                            <p>Get probability scores and feature importance.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info mt-5">
+                    <h5>⚠️ Important Note</h5>
+                    <p class="mb-0">
+                        This is an educational project for beginners. Predictions are based on synthetic data 
+                        and should not be used for actual medical diagnosis. Always consult healthcare professionals.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

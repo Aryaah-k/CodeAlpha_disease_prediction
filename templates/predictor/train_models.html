@@ -1,0 +1,156 @@
+{% extends 'predictor/base.html' %}
+
+{% block title %}Train Models{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h3 class="mb-0">🤖 Train Machine Learning Models</h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h5>About Model Training</h5>
+                    <p>
+                        This will train three Random Forest classifiers using synthetic medical data.
+                        The models will be saved in the <code>ml_models/</code> directory.
+                    </p>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">❤️ Heart Model</h5>
+                                <p class="card-text">Random Forest with 13 features</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">🩸 Diabetes Model</h5>
+                                <p class="card-text">Random Forest with 8 features</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">🦠 Cancer Model</h5>
+                                <p class="card-text">Random Forest with 5 features</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-5">
+                    <button id="trainBtn" class="btn btn-warning btn-lg">
+                        🚀 Start Training All Models
+                    </button>
+                    <a href="{% url 'home' %}" class="btn btn-secondary btn-lg ms-2">
+                        ← Back to Home
+                    </a>
+                </div>
+                
+                <div id="trainingResult" class="mt-4" style="display: none;">
+                    <div class="alert alert-success">
+                        <h5>✅ Training Complete!</h5>
+                        <div id="accuracyResult"></div>
+                    </div>
+                </div>
+                
+                <div id="trainingProgress" class="mt-4" style="display: none;">
+                    <h5>Training Progress</h5>
+                    <div class="progress" style="height: 30px;">
+                        <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" style="width: 0%">0%</div>
+                    </div>
+                    <div id="progressText" class="mt-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('trainBtn').addEventListener('click', function() {
+    const btn = this;
+    const resultDiv = document.getElementById('trainingResult');
+    const progressDiv = document.getElementById('trainingProgress');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const accuracyResult = document.getElementById('accuracyResult');
+    
+    // Disable button and show progress
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Training...';
+    resultDiv.style.display = 'none';
+    progressDiv.style.display = 'block';
+    
+    // Simulate progress updates
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+        progress += 5;
+        if (progress <= 90) {
+            progressBar.style.width = progress + '%';
+            progressBar.innerHTML = progress + '%';
+            
+            if (progress < 30) {
+                progressText.innerHTML = 'Loading datasets...';
+            } else if (progress < 60) {
+                progressText.innerHTML = 'Training models...';
+            } else {
+                progressText.innerHTML = 'Saving models...';
+            }
+        }
+    }, 300);
+    
+    // Make AJAX request
+    fetch('{% url "train_models" %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        clearInterval(progressInterval);
+        progressBar.style.width = '100%';
+        progressBar.innerHTML = '100%';
+        progressText.innerHTML = 'Complete!';
+        
+        setTimeout(() => {
+            if (data.success) {
+                let html = '<ul>';
+                for (const [model, accuracy] of Object.entries(data.accuracy)) {
+                    html += `<li>${model.charAt(0).toUpperCase() + model.slice(1)} Model Accuracy: <strong>${(accuracy * 100).toFixed(2)}%</strong></li>`;
+                }
+                html += '</ul>';
+                accuracyResult.innerHTML = html;
+                resultDiv.style.display = 'block';
+            } else {
+                resultDiv.className = 'alert alert-danger';
+                resultDiv.innerHTML = `<h5>❌ Training Failed</h5><p>${data.error}</p>`;
+                resultDiv.style.display = 'block';
+            }
+            
+            btn.disabled = false;
+            btn.innerHTML = '🚀 Start Training All Models';
+        }, 1000);
+    })
+    .catch(error => {
+        clearInterval(progressInterval);
+        resultDiv.className = 'alert alert-danger';
+        resultDiv.innerHTML = `<h5>❌ Error</h5><p>${error.message}</p>`;
+        resultDiv.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = '🚀 Start Training All Models';
+    });
+});
+</script>
+{% endblock %}

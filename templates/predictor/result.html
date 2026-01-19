@@ -1,0 +1,96 @@
+{% extends 'predictor/base.html' %}
+
+{% block title %}Prediction Result{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h3 class="mb-0">📊 Prediction Result</h3>
+            </div>
+            <div class="card-body text-center">
+                <h4 class="mb-4">Disease: <strong>{{ disease }}</strong></h4>
+                
+                <div class="alert {% if prediction == 'Positive' or prediction == 'Malignant' %}alert-danger{% else %}alert-success{% endif %}">
+                    <h2>
+                        Result: 
+                        <span class="{% if prediction == 'Positive' or prediction == 'Malignant' %}result-positive{% else %}result-negative{% endif %}">
+                            {{ prediction }}
+                        </span>
+                    </h2>
+                    <h3 class="mt-3">Probability: {{ probability }}%</h3>
+                </div>
+                
+                <div class="mt-4">
+                    <h5>📋 Input Parameters</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for key, value in input_data.items %}
+                                <tr>
+                                    <td>{{ key }}</td>
+                                    <td><strong>{{ value }}</strong></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                {% if feature_importance %}
+                <div class="mt-4">
+                    <h5>🎯 Feature Importance</h5>
+                    <p>Most influential factors in the prediction:</p>
+                    <div class="mt-3">
+                        {% for feature, data in feature_importance.items %}
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between">
+                                <span>{{ feature }}</span>
+                                <span>{{ data.value|floatformat:3 }}</span>
+                            </div>
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar" role="progressbar" style="--width: {{ data.width }}" aria-valuenow="{{ data.value }}" aria-valuemin="0" aria-valuemax="1">
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="mt-5">
+                    <a href="{% url 'home' %}" class="btn btn-primary btn-lg">
+                        ← Back to Home
+                    </a>
+                    {% if disease == 'Heart Disease' %}
+                    <a href="{% url 'predict_heart' %}" class="btn btn-success btn-lg ms-2">
+                        🔄 New Prediction
+                    </a>
+                    {% elif disease == 'Diabetes' %}
+                    <a href="{% url 'predict_diabetes' %}" class="btn btn-success btn-lg ms-2">
+                        🔄 New Prediction
+                    </a>
+                    {% elif disease == 'Breast Cancer' %}
+                    <a href="{% url 'predict_cancer' %}" class="btn btn-success btn-lg ms-2">
+                        🔄 New Prediction
+                    </a>
+                    {% endif %}
+                </div>
+                
+                <div class="alert alert-warning mt-4">
+                    <strong>⚠️ Important:</strong> This prediction is based on machine learning models 
+                    trained on synthetic data. It is for educational purposes only and should not be 
+                    used for actual medical diagnosis. Always consult with healthcare professionals.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

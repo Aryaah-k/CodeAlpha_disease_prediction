@@ -1,0 +1,262 @@
+{% extends 'predictor/base.html' %}
+
+{% block title %}Breast Cancer Prediction{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h3 class="mb-0">🦠 Breast Cancer Prediction</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="alert alert-info mb-4">
+                        <h6>🔬 About This Prediction</h6>
+                        <p class="mb-0">
+                            This model predicts whether a breast tumor is benign (non-cancerous) or malignant (cancerous) 
+                            based on cell nucleus characteristics from digitized images.
+                        </p>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Mean Radius</label>
+                            <input type="number" step="0.1" class="form-control" name="mean_radius" 
+                                   min="6" max="28" value="14" required>
+                            <small class="text-muted">Mean of distances from center to points on perimeter (6-28)</small>
+                            <div class="mt-2">
+                                <span class="badge bg-info">Typical: &lt; 14 (Benign)</span>
+                                <span class="badge bg-danger ms-2">&gt; 14 (Malignant)</span>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Mean Texture</label>
+                            <input type="number" step="0.1" class="form-control" name="mean_texture" 
+                                   min="9" max="40" value="19" required>
+                            <small class="text-muted">Standard deviation of gray-scale values (9-40)</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Mean Perimeter</label>
+                            <input type="number" step="0.1" class="form-control" name="mean_perimeter" 
+                                   min="40" max="190" value="92" required>
+                            <small class="text-muted">Mean size of the core tumor (40-190)</small>
+                            <div class="progress mt-2" style="height: 10px;">
+                                <div class="progress-bar bg-success" style="width: 40%">Benign</div>
+                                <div class="progress-bar bg-danger" style="width: 60%">Malignant</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Mean Area</label>
+                            <input type="number" class="form-control" name="mean_area" 
+                                   min="200" max="2500" value="650" required>
+                            <small class="text-muted">Mean area of the nucleus (200-2500)</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Mean Smoothness</label>
+                            <input type="number" step="0.001" class="form-control" name="mean_smoothness" 
+                                   min="0.05" max="0.16" value="0.095" required>
+                            <small class="text-muted">Local variation in radius lengths (0.05-0.16)</small>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6>Quick Reference</h6>
+                                    <p class="mb-1"><small>Lower values typically indicate benign tumors</small></p>
+                                    <p class="mb-0"><small>Higher values may indicate malignancy</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 text-center">
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            🔍 Predict Breast Cancer
+                        </button>
+                        <a href="{% url 'home' %}" class="btn btn-secondary btn-lg ms-2">
+                            ← Back to Home
+                        </a>
+                    </div>
+                </form>
+                
+                <div class="row mt-5">
+                    <div class="col-md-6">
+                        <div class="card border-success">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0">✅ Benign Characteristics</h6>
+                            </div>
+                            <div class="card-body">
+                                <ul class="mb-0">
+                                    <li>Smaller cell radius (&lt; 14)</li>
+                                    <li>Uniform texture</li>
+                                    <li>Smooth perimeter</li>
+                                    <li>Regular shape</li>
+                                    <li>Well-defined borders</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card border-danger">
+                            <div class="card-header bg-danger text-white">
+                                <h6 class="mb-0">⚠️ Malignant Characteristics</h6>
+                            </div>
+                            <div class="card-body">
+                                <ul class="mb-0">
+                                    <li>Larger cell radius (&gt; 14)</li>
+                                    <li>Irregular texture</li>
+                                    <li>Rough perimeter</li>
+                                    <li>Irregular shape</li>
+                                    <li>Poorly defined borders</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h5>📈 Visual Guide</h5>
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6>Radius Comparison</h6>
+                                    <div class="d-flex justify-content-center align-items-center mt-3">
+                                        <div class="bg-success rounded-circle me-3" 
+                                             style="width: 40px; height: 40px;"></div>
+                                        <div class="bg-danger rounded-circle" 
+                                             style="width: 70px; height: 70px;"></div>
+                                    </div>
+                                    <p class="mt-2 mb-0"><small>Small vs Large Radius</small></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6>Smoothness</h6>
+                                    <div class="mt-3">
+                                        <div class="bg-success p-2 mb-2" style="border-radius: 5px;">
+                                            <small>Smooth: 0.05-0.09</small>
+                                        </div>
+                                        <div class="bg-warning p-2 mb-2" style="border-radius: 5px;">
+                                            <small>Moderate: 0.09-0.12</small>
+                                        </div>
+                                        <div class="bg-danger p-2" style="border-radius: 5px;">
+                                            <small>Rough: 0.12-0.16</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6>Area Distribution</h6>
+                                    <div class="mt-3">
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar bg-success" style="width: 40%">
+                                                <small>&lt; 700</small>
+                                            </div>
+                                            <div class="progress-bar bg-warning" style="width: 30%">
+                                                <small>700-1200</small>
+                                            </div>
+                                            <div class="progress-bar bg-danger" style="width: 30%">
+                                                <small>&gt; 1200</small>
+                                            </div>
+                                        </div>
+                                        <p class="mt-2 mb-0"><small>Small → Medium → Large</small></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning mt-4">
+                    <strong>⚠️ Medical Disclaimer:</strong>
+                    <p class="mb-0 mt-2">
+                        This prediction is based on statistical analysis of cell characteristics. 
+                        It is NOT a substitute for professional medical diagnosis. 
+                        Always consult with healthcare professionals and follow recommended 
+                        screening guidelines for breast cancer detection.
+                    </p>
+                </div>
+                
+                <div class="mt-4">
+                    <h6>🏥 Recommended Screening</h6>
+                    <ul>
+                        <li><strong>Mammograms:</strong> Recommended annually after age 40</li>
+                        <li><strong>Self-Exams:</strong> Monthly breast self-examinations</li>
+                        <li><strong>Clinical Exams:</strong> Yearly exams by healthcare provider</li>
+                        <li><strong>Genetic Testing:</strong> If family history suggests risk</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Update visual indicators based on input values
+    const inputs = document.querySelectorAll('input[type="number"]');
+    
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            updateVisualIndicators();
+        });
+    });
+    
+    function updateVisualIndicators() {
+        // Get radius value
+        const radiusInput = document.querySelector('input[name="mean_radius"]');
+        const radiusValue = parseFloat(radiusInput.value);
+        
+        // Update radius indicator
+        const radiusIndicator = radiusInput.parentElement.querySelector('.badge');
+        if (radiusIndicator) {
+            if (radiusValue < 14) {
+                radiusIndicator.className = 'badge bg-info';
+                radiusIndicator.textContent = 'Typical: < 14 (Benign)';
+            } else {
+                radiusIndicator.className = 'badge bg-danger';
+                radiusIndicator.textContent = '> 14 (Malignant)';
+            }
+        }
+        
+        // Get perimeter value
+        const perimeterInput = document.querySelector('input[name="mean_perimeter"]');
+        const perimeterValue = parseFloat(perimeterInput.value);
+        
+        // Update perimeter progress bar
+        if (perimeterValue) {
+            const benignPercent = Math.min((perimeterValue - 40) / (190 - 40) * 100, 100);
+            const progressBar = perimeterInput.parentElement.querySelector('.progress-bar');
+            if (progressBar) {
+                progressBar.style.width = benignPercent + '%';
+            }
+        }
+    }
+    
+    // Initialize indicators
+    updateVisualIndicators();
+});
+</script>
+{% endblock %}
