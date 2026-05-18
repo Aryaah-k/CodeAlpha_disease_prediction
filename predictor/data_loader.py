@@ -1,6 +1,6 @@
+import os
 import pandas as pd
 import numpy as np
-import os
 
 DATASETS_DIR = os.path.join(os.path.dirname(__file__), '..', '..', 'datasets')
 
