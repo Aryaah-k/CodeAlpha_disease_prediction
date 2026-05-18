@@ -1,0 +1,165 @@
+{% extends 'predictor/base.html' %}
+
+{% block title %}Heart Disease Prediction{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">❤️ Heart Disease Prediction</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Age</label>
+                            <input type="number" class="form-control" name="age" 
+                                   min="29" max="80" value="55" required>
+                            <small class="text-muted">Age in years (29-80)</small>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Sex</label>
+                            <select class="form-select" name="sex" required>
+                                <option value="1">Male</option>
+                                <option value="0">Female</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Chest Pain Type</label>
+                            <select class="form-select" name="cp" required>
+                                <option value="0">Typical Angina</option>
+                                <option value="1">Atypical Angina</option>
+                                <option value="2">Non-anginal Pain</option>
+                                <option value="3">Asymptomatic</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Resting Blood Pressure</label>
+                            <input type="number" class="form-control" name="trestbps" 
+                                   min="94" max="200" value="130" required>
+                            <small class="text-muted">mm Hg (94-200)</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Cholesterol</label>
+                            <input type="number" class="form-control" name="chol" 
+                                   min="126" max="564" value="250" required>
+                            <small class="text-muted">mg/dl (126-564)</small>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Fasting Blood Sugar</label>
+                            <select class="form-select" name="fbs" required>
+                                <option value="0">≤ 120 mg/dl</option>
+                                <option value="1">> 120 mg/dl</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Resting ECG</label>
+                            <select class="form-select" name="restecg" required>
+                                <option value="0">Normal</option>
+                                <option value="1">ST-T Wave Abnormality</option>
+                                <option value="2">Left Ventricular Hypertrophy</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Exercise Induced Angina</label>
+                            <select class="form-select" name="exang" required>
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Max Heart Rate</label>
+                            <input type="number" class="form-control" name="thalach"
+                                   min="71" max="202" value="150" required>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">ST Depression</label>
+                            <input type="number" step="0.1" class="form-control" name="oldpeak"
+                                   min="0" max="6.2" value="1.0" required>
+                            <small class="text-muted">Exercise induced (0-6.2)</small>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Slope</label>
+                            <select class="form-select" name="slope" required>
+                                <option value="0">Upsloping</option>
+                                <option value="1">Flat</option>
+                                <option value="2">Downsloping</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Number of Major Vessels</label>
+                            <select class="form-select" name="ca" required>
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Thalassemia</label>
+                            <select class="form-select" name="thal" required>
+                                <option value="1">Normal</option>
+                                <option value="2">Fixed Defect</option>
+                                <option value="3">Reversible Defect</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 text-center">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            🔍 Predict Heart Disease
+                        </button>
+                        <a href="{% url 'home' %}" class="btn btn-secondary btn-lg ms-2">
+                            ← Back to Home
+                        </a>
+                    </div>
+                </form>
+                
+                <div class="mt-5">
+                    <h5>📊 Parameter Information</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <strong>Chest Pain Type:</strong> 0=Typical Angina, 1=Atypical Angina, 
+                            2=Non-anginal Pain, 3=Asymptomatic
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Fasting Blood Sugar:</strong> 1=True (>120 mg/dl), 0=False
+                        </li>
+                        <li class="list-group-item">
+                            <strong>ST Depression:</strong> Exercise induced ST depression relative to rest
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Major Vessels:</strong> Number of major vessels colored by fluoroscopy (0-3)
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
